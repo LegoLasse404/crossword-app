@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4efe4;
+  --foreground: #455a64;
+  --classic-bg: #f4efe4;
+  --classic-surface: #f5f7f9;
+  --classic-white: #ffffff;
+  --classic-border: #d3d8dc;
+  --classic-grid: #333333;
+  --classic-text: #455a64;
+  --classic-title: #2f4f7a;
+  --classic-ink: #1a1a1a;
+  --classic-sage: #668f71;
 }
 
 @theme inline {
@@ -12,15 +21,151 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Georgia, serif;
+}
+
+.classic-page {
+  background-color: var(--classic-bg);
+}
+
+.classic-main {
+  font-family: Georgia, serif;
+}
+
+.classic-title {
+  color: var(--classic-title);
+}
+
+.classic-text {
+  color: var(--classic-text);
+}
+
+.classic-header {
+  border-color: var(--classic-border);
+  background-color: var(--classic-bg);
+  font-family: Georgia, serif;
+}
+
+.classic-surface {
+  background-color: var(--classic-surface);
+  border-color: var(--classic-border);
+}
+
+.classic-border {
+  border-color: var(--classic-border);
+}
+
+.classic-input {
+  background-color: var(--classic-white);
+  color: var(--classic-text);
+  border-color: var(--classic-grid);
+}
+
+.classic-btn-blue {
+  background-color: var(--classic-title);
+  color: #fff;
+}
+
+.classic-btn-blue:hover {
+  background-color: #2a5c95;
+}
+
+.classic-btn-blue:active {
+  background-color: #2c4b73;
+}
+
+.classic-btn-sage {
+  background-color: var(--classic-sage);
+  color: #fff;
+}
+
+.classic-btn-sage:hover {
+  background-color: #5e8c69;
+}
+
+.classic-btn-sage:active {
+  background-color: #5f7a65;
+}
+
+.classic-btn-danger {
+  background-color: #8b3a3a;
+  color: #fff;
+}
+
+.classic-btn-danger:hover {
+  background-color: #a44343;
+}
+
+.classic-btn-danger:active {
+  background-color: #7a3333;
+}
+
+.classic-btn-neutral {
+  background-color: var(--classic-surface);
+  color: var(--classic-text);
+  border: 1px solid var(--classic-border);
+}
+
+.classic-btn-neutral:hover {
+  background-color: #eaedf0;
+  border-color: #c3cbd1;
+}
+
+.classic-btn-neutral:active {
+  background-color: #e1e6ea;
+  border-color: #b8c2c9;
+}
+
+button,
+.classic-btn-blue,
+.classic-btn-sage,
+.classic-btn-danger,
+.classic-btn-neutral {
+  transition: background-color 0.2s ease,
+    color 0.2s ease, border-color 0.2s ease;
+}
+
+button:disabled,
+.classic-btn-blue[aria-disabled="true"],
+.classic-btn-sage[aria-disabled="true"],
+.classic-btn-danger[aria-disabled="true"],
+.classic-btn-neutral[aria-disabled="true"] {
+  opacity: 0.65;
+}
+
+.classic-link {
+  color: var(--classic-text);
+}
+
+.classic-grid {
+  border: 2px solid var(--classic-grid);
+}
+
+.classic-grid-cell {
+  border: 1px solid var(--classic-grid);
+  background-color: var(--classic-white);
+}
+
+.classic-grid-cell-block {
+  background-color: var(--classic-ink);
+}
+
+.classic-grid-input {
+  color: var(--classic-grid);
+}
+
+.classic-grid-input:focus {
+  background-color: #dbe7f4;
+}
+
+.classic-clue-list {
+  background-color: var(--classic-surface);
+  color: var(--classic-text);
+}
+
+.classic-clue-item {
+  border-color: var(--classic-border);
 }
