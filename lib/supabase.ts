@@ -1,4 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/supabase";
 
 // grab values and trim whitespace just in case
 const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -19,7 +20,7 @@ if (!supabaseUrl.startsWith("http")) {
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // For server-side operations (API routes, background jobs, etc.) you
 // should use a service role key so that row level security policies
@@ -30,9 +31,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // blowing up when the module is pulled into client bundles (e.g. via
 // a shared types file) during development.
 
-let _adminClient;
+let _adminClient: SupabaseClient<Database> | undefined;
 if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  _adminClient = createClient(
+  _adminClient = createClient<Database>(
     supabaseUrl,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     { auth: { persistSession: false } }
@@ -42,4 +43,4 @@ if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
   console.warn("SUPABASE_SERVICE_ROLE_KEY not set; admin client disabled");
 }
 
-export const supabaseAdmin = _adminClient as ReturnType<typeof createClient> | undefined;
+export const supabaseAdmin = _adminClient;

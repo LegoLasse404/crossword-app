@@ -98,7 +98,7 @@ export async function POST(req: Request) {
 
     const { error } = await supabaseAdmin
       .from("crossword_shares")
-      .insert([{ crossword_id, shared_with_user_id }] as any);
+      .insert([{ crossword_id, shared_with_user_id }]);
 
     if (error) {
       console.error("Insert error:", error);
