@@ -156,6 +156,12 @@ export default function CrosswordsPage() {
                 >
                   Play
                 </Link>
+                <Link
+                  href={`/?edit=${crossword.id}`}
+                  className="classic-btn-neutral px-4 py-2 rounded font-medium transition-colors text-center"
+                >
+                  Edit
+                </Link>
                 <button
                   onClick={() => handleDelete(crossword.id)}
                   className="classic-btn-danger px-4 py-2 rounded font-medium"

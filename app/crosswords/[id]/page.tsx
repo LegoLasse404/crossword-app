@@ -115,18 +115,6 @@ export default function PlayCrosswordPage() {
   const rows = layout?.rows || 0;
   const cols = layout?.cols || 0;
   const crosswordClues = crossword.crossword_clues || [];
-  const acrossClues = crosswordClues.filter((clue) => {
-    const wordData = layout?.result?.find(
-      (w: any) => w.answer?.toLowerCase() === clue.word?.toLowerCase()
-    );
-    return wordData?.orientation === "across";
-  });
-  const downClues = crosswordClues.filter((clue) => {
-    const wordData = layout?.result?.find(
-      (w: any) => w.answer?.toLowerCase() === clue.word?.toLowerCase()
-    );
-    return wordData?.orientation === "down";
-  });
   const handleCheck = () => {
     const correctByCell = new Map<string, string>();
     const words = Array.isArray(layout?.result) ? layout.result : [];
@@ -343,6 +331,32 @@ export default function PlayCrosswordPage() {
     const key = `${rowIndex}-${colIndex}`;
     return clueNumberByCell.get(key) ?? fallbackNumber;
   };
+  const getWordDataForClue = (clue: CrosswordClue) =>
+    layout?.result?.find(
+      (w: any) => w.answer?.toLowerCase() === clue.word?.toLowerCase()
+    );
+
+  const numberedAcrossClues = crosswordClues
+    .filter((clue) => getWordDataForClue(clue)?.orientation === "across")
+    .map((clue, idx) => {
+      const wordData = getWordDataForClue(clue);
+      return {
+        clue,
+        number: getClueNumberForWord(wordData, idx + 1),
+      };
+    })
+    .sort((a, b) => a.number - b.number);
+
+  const numberedDownClues = crosswordClues
+    .filter((clue) => getWordDataForClue(clue)?.orientation === "down")
+    .map((clue, idx) => {
+      const wordData = getWordDataForClue(clue);
+      return {
+        clue,
+        number: getClueNumberForWord(wordData, idx + 1),
+      };
+    })
+    .sort((a, b) => a.number - b.number);
 
   return (
     <div className="classic-page flex min-h-screen flex-col">
@@ -353,144 +367,140 @@ export default function PlayCrosswordPage() {
           {crossword.title || "Untitled Crossword"}
         </h1>
 
-        {/* Crossword Grid */}
-        <div className="mb-12">
+        <div className="overflow-x-auto">
           <div
-            className="inline-grid gap-0"
-            style={{
-              gridTemplateColumns: `repeat(${cols}, 40px)`,
-              gridTemplateRows: `repeat(${rows}, 40px)`,
-            }}
+            className="grid gap-10 items-start min-w-max"
+            style={{ gridTemplateColumns: "auto minmax(320px, 1fr)" }}
           >
-            {grid.map((row: any[], rowIndex: number) =>
-              row.map((cell: any, colIndex: number) => {
-                const key = `${rowIndex}-${colIndex}`;
-                const isBlackCell = cell === "-";
+          <div>
+            <div
+              className="inline-grid gap-0"
+              style={{
+                gridTemplateColumns: `repeat(${cols}, 40px)`,
+                gridTemplateRows: `repeat(${rows}, 40px)`,
+              }}
+            >
+              {grid.map((row: any[], rowIndex: number) =>
+                row.map((cell: any, colIndex: number) => {
+                  const key = `${rowIndex}-${colIndex}`;
+                  const isBlackCell = cell === "-";
 
-                if (isBlackCell) {
-                  return <div key={key} className="w-10 h-10" />;
-                }
+                  if (isBlackCell) {
+                    return <div key={key} className="w-10 h-10" />;
+                  }
 
-                const hasTop = hasCellAt(rowIndex - 1, colIndex);
-                const hasRight = hasCellAt(rowIndex, colIndex + 1);
-                const hasBottom = hasCellAt(rowIndex + 1, colIndex);
-                const hasLeft = hasCellAt(rowIndex, colIndex - 1);
-                const checkStatus = cellCheckStatus[key];
+                  const hasTop = hasCellAt(rowIndex - 1, colIndex);
+                  const hasRight = hasCellAt(rowIndex, colIndex + 1);
+                  const hasBottom = hasCellAt(rowIndex + 1, colIndex);
+                  const hasLeft = hasCellAt(rowIndex, colIndex - 1);
+                  const checkStatus = cellCheckStatus[key];
 
-                return (
-                  <div
-                    key={key}
-                    className="classic-grid-cell w-10 h-10 relative"
-                    style={{
-                      borderTopWidth: hasTop ? "0.5px" : "2px",
-                      borderRightWidth: hasRight ? "0.5px" : "2px",
-                      borderBottomWidth: hasBottom ? "0.5px" : "2px",
-                      borderLeftWidth: hasLeft ? "0.5px" : "2px",
-                      backgroundColor:
-                        checkStatus === "correct"
-                          ? "#bbf7d0"
-                          : checkStatus === "incorrect"
-                            ? "#fecaca"
-                            : undefined,
-                    }}
-                  >
-                    {clueNumberByCell.has(key) && (
-                      <span className="classic-text absolute top-0 left-0 text-[10px] font-semibold px-1 leading-none pt-0.5">
-                        {clueNumberByCell.get(key)}
-                      </span>
-                    )}
-                    <input
-                      type="text"
-                      maxLength={1}
-                      value={userAnswers[key] || ""}
-                      onChange={(e) => {
-                        const enteredValue = handleCellChange(
-                          rowIndex,
-                          colIndex,
-                          e.target.value
-                        );
-                        if (enteredValue) {
-                          const nextCell =
-                            moveMode === "neutral"
-                              ? findNextCellForNeutralMode(rowIndex, colIndex)
-                              : findNextCellForTyping(rowIndex, colIndex, typingDirection);
-                          if (nextCell) {
-                            if (moveMode === "neutral") {
-                              const inferredDirection =
-                                nextCell.row === rowIndex ? "right" : "down";
-                              setTypingDirection(inferredDirection);
-                              setMoveMode("directional");
+                  return (
+                    <div
+                      key={key}
+                      className="classic-grid-cell w-10 h-10 relative"
+                      style={{
+                        borderTopWidth: hasTop ? "0.5px" : "2px",
+                        borderRightWidth: hasRight ? "0.5px" : "2px",
+                        borderBottomWidth: hasBottom ? "0.5px" : "2px",
+                        borderLeftWidth: hasLeft ? "0.5px" : "2px",
+                        backgroundColor:
+                          checkStatus === "correct"
+                            ? "#bbf7d0"
+                            : checkStatus === "incorrect"
+                              ? "#fecaca"
+                              : undefined,
+                      }}
+                    >
+                      {clueNumberByCell.has(key) && (
+                        <span className="classic-text absolute top-0 left-0 text-[10px] font-semibold px-1 leading-none pt-0.5">
+                          {clueNumberByCell.get(key)}
+                        </span>
+                      )}
+                      <input
+                        type="text"
+                        maxLength={1}
+                        value={userAnswers[key] || ""}
+                        onChange={(e) => {
+                          const enteredValue = handleCellChange(
+                            rowIndex,
+                            colIndex,
+                            e.target.value
+                          );
+                          if (enteredValue) {
+                            const nextCell =
+                              moveMode === "neutral"
+                                ? findNextCellForNeutralMode(rowIndex, colIndex)
+                                : findNextCellForTyping(rowIndex, colIndex, typingDirection);
+                            if (nextCell) {
+                              if (moveMode === "neutral") {
+                                const inferredDirection =
+                                  nextCell.row === rowIndex ? "right" : "down";
+                                setTypingDirection(inferredDirection);
+                                setMoveMode("directional");
+                              }
+                              focusCell(nextCell.row, nextCell.col);
                             }
-                            focusCell(nextCell.row, nextCell.col);
                           }
-                        }
-                      }}
-                      onKeyDown={(e) => handleCellKeyDown(e, rowIndex, colIndex)}
-                      onMouseDown={() => setMoveMode("neutral")}
-                      ref={(input) => {
-                        cellRefs.current[key] = input;
-                      }}
-                      className="classic-grid-input w-full h-full text-center text-lg font-bold bg-transparent border-0 outline-none uppercase"
-                    />
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
+                        }}
+                        onKeyDown={(e) => handleCellKeyDown(e, rowIndex, colIndex)}
+                        onMouseDown={() => setMoveMode("neutral")}
+                        ref={(input) => {
+                          cellRefs.current[key] = input;
+                        }}
+                        className="classic-grid-input w-full h-full text-center text-lg font-bold bg-transparent border-0 outline-none uppercase"
+                      />
+                    </div>
+                  );
+                })
+              )}
+            </div>
 
-        {/* Clues Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="classic-title text-2xl font-bold mb-4">
-              Across
-            </h2>
-            <ol className="list-none">
-              {acrossClues.map((clue, idx) => {
-                  const wordData = layout?.result?.find(
-                    (w: any) => w.answer?.toLowerCase() === clue.word?.toLowerCase()
-                  );
-                  return (
-                    <li
-                      key={clue.id}
-                      className="classic-clue-item px-3 py-3 border-b last:border-b-0"
-                    >
-                      <span className="classic-text font-semibold">
-                        {getClueNumberForWord(wordData, idx + 1)}.
-                      </span>{" "}
-                      <span className="classic-text">
-                        {clue.hint}
-                      </span>
-                    </li>
-                  );
-                })}
-            </ol>
           </div>
 
-          <div>
-            <h2 className="classic-title text-2xl font-bold mb-4">
-              Down
-            </h2>
-            <ol className="list-none">
-              {downClues.map((clue, idx) => {
-                  const wordData = layout?.result?.find(
-                    (w: any) => w.answer?.toLowerCase() === clue.word?.toLowerCase()
-                  );
-                  return (
-                    <li
-                      key={clue.id}
-                      className="classic-clue-item px-3 py-3 border-b last:border-b-0"
-                    >
-                      <span className="classic-text font-semibold">
-                        {getClueNumberForWord(wordData, idx + 1)}.
-                      </span>{" "}
-                      <span className="classic-text">
-                        {clue.hint}
-                      </span>
-                    </li>
-                  );
-                })}
-            </ol>
+          <div className="grid grid-cols-1 gap-6 pl-2">
+            <div>
+              <h2 className="classic-title text-2xl font-bold mb-4">
+                Across
+              </h2>
+              <ol className="list-none">
+                {numberedAcrossClues.map(({ clue, number }) => (
+                  <li
+                    key={clue.id}
+                    className="classic-clue-item px-3 py-3 border-b last:border-b-0"
+                  >
+                    <span className="classic-text font-semibold">
+                      {number}.
+                    </span>{" "}
+                    <span className="classic-text">
+                      {clue.hint}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div>
+              <h2 className="classic-title text-2xl font-bold mb-4">
+                Down
+              </h2>
+              <ol className="list-none">
+                {numberedDownClues.map(({ clue, number }) => (
+                  <li
+                    key={clue.id}
+                    className="classic-clue-item px-3 py-3 border-b last:border-b-0"
+                  >
+                    <span className="classic-text font-semibold">
+                      {number}.
+                    </span>{" "}
+                    <span className="classic-text">
+                      {clue.hint}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
           </div>
         </div>
 

@@ -1,17 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4efe4;
-  --foreground: #455a64;
-  --classic-bg: #f4efe4;
-  --classic-surface: #f5f7f9;
+  --background: #ededed;
+  --foreground: #102937;
+  --classic-bg: #ededed;
+  --classic-surface: #e1d9cf;
   --classic-white: #ffffff;
-  --classic-border: #d3d8dc;
-  --classic-grid: #333333;
-  --classic-text: #455a64;
-  --classic-title: #2f4f7a;
-  --classic-ink: #1a1a1a;
-  --classic-sage: #668f71;
+  --classic-border: #d6c4b0;
+  --classic-grid: #102937;
+  --classic-text: #102937;
+  --classic-title: #102937;
+  --classic-ink: #091d26;
+  --classic-sage: #124d54;
+  --classic-accent: #f9744b;
+  --classic-warm: #d84f2a;
 }
 
 @theme inline {
@@ -24,7 +26,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Georgia, serif;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
 }
 
 .classic-page {
@@ -32,11 +34,12 @@ body {
 }
 
 .classic-main {
-  font-family: Georgia, serif;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
 }
 
 .classic-title {
   color: var(--classic-title);
+  letter-spacing: -0.01em;
 }
 
 .classic-text {
@@ -45,13 +48,15 @@ body {
 
 .classic-header {
   border-color: var(--classic-border);
-  background-color: var(--classic-bg);
-  font-family: Georgia, serif;
+  background-color: color-mix(in srgb, var(--classic-bg) 88%, white 12%);
+  backdrop-filter: blur(6px);
 }
 
 .classic-surface {
   background-color: var(--classic-surface);
   border-color: var(--classic-border);
+  border-radius: 0.85rem;
+  box-shadow: 0 10px 24px rgba(16, 41, 55, 0.09);
 }
 
 .classic-border {
@@ -61,7 +66,12 @@ body {
 .classic-input {
   background-color: var(--classic-white);
   color: var(--classic-text);
+  border-color: var(--classic-border);
+}
+
+.classic-input:focus {
   border-color: var(--classic-grid);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--classic-accent) 45%, transparent 55%);
 }
 
 .classic-btn-blue {
@@ -70,11 +80,11 @@ body {
 }
 
 .classic-btn-blue:hover {
-  background-color: #2a5c95;
+  background-color: color-mix(in srgb, var(--classic-title) 88%, black 12%);
 }
 
 .classic-btn-blue:active {
-  background-color: #2c4b73;
+  background-color: color-mix(in srgb, var(--classic-title) 78%, black 22%);
 }
 
 .classic-btn-sage {
@@ -83,40 +93,40 @@ body {
 }
 
 .classic-btn-sage:hover {
-  background-color: #5e8c69;
+  background-color: color-mix(in srgb, var(--classic-sage) 88%, black 12%);
 }
 
 .classic-btn-sage:active {
-  background-color: #5f7a65;
+  background-color: color-mix(in srgb, var(--classic-sage) 78%, black 22%);
 }
 
 .classic-btn-danger {
-  background-color: #8b3a3a;
+  background-color: var(--classic-warm);
   color: #fff;
 }
 
 .classic-btn-danger:hover {
-  background-color: #a44343;
+  background-color: color-mix(in srgb, var(--classic-warm) 88%, black 12%);
 }
 
 .classic-btn-danger:active {
-  background-color: #7a3333;
+  background-color: color-mix(in srgb, var(--classic-warm) 78%, black 22%);
 }
 
 .classic-btn-neutral {
-  background-color: var(--classic-surface);
+  background-color: var(--classic-bg);
   color: var(--classic-text);
   border: 1px solid var(--classic-border);
 }
 
 .classic-btn-neutral:hover {
-  background-color: #eaedf0;
-  border-color: #c3cbd1;
+  background-color: color-mix(in srgb, var(--classic-bg) 70%, var(--classic-accent) 30%);
+  border-color: var(--classic-grid);
 }
 
 .classic-btn-neutral:active {
-  background-color: #e1e6ea;
-  border-color: #b8c2c9;
+  background-color: color-mix(in srgb, var(--classic-bg) 55%, var(--classic-accent) 45%);
+  border-color: var(--classic-grid);
 }
 
 button,
@@ -138,6 +148,11 @@ button:disabled,
 
 .classic-link {
   color: var(--classic-text);
+  text-underline-offset: 2px;
+}
+
+.classic-link:hover {
+  color: var(--classic-warm);
 }
 
 .classic-grid {
@@ -158,7 +173,7 @@ button:disabled,
 }
 
 .classic-grid-input:focus {
-  background-color: #dbe7f4;
+  background-color: color-mix(in srgb, var(--classic-accent) 30%, white 70%);
 }
 
 .classic-clue-list {

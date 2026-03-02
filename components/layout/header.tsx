@@ -7,11 +7,11 @@ export function Header() {
   const user = useUser();
 
   return (
-    <header className="classic-header border-b shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+    <header className="classic-header border-b shadow-sm sticky top-0 z-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <Link
           href="/"
-          className="classic-title text-3xl font-bold mb-6 hover:opacity-80 transition-opacity inline-block"
+          className="classic-title text-2xl sm:text-3xl font-semibold hover:opacity-85 transition-opacity inline-block"
         >
           Crossword App
         </Link>

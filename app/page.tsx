@@ -21,6 +21,46 @@ export default function Home() {
     { id: "1", hint: "", word: "" },
   ]);
 
+  useEffect(() => {
+    const editId = new URLSearchParams(window.location.search).get("edit");
+    if (!editId || !user?.id) return;
+
+    const loadForEdit = async () => {
+      try {
+        const res = await authFetch(`/api/crosswords/${editId}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data?.error || "Failed to load crossword for edit");
+          return;
+        }
+
+        const crossword = data?.crossword;
+        setTitle(crossword?.title || "");
+
+        const sourceClues = Array.isArray(crossword?.crossword_clues)
+          ? crossword.crossword_clues
+          : [];
+
+        const loadedPairs = sourceClues.map((clue: any, index: number) => ({
+          id: `${Date.now()}-${index}`,
+          hint: String(clue?.hint || ""),
+          word: String(clue?.word || "").toUpperCase(),
+        }));
+
+        setPairs(
+          loadedPairs.length > 0
+            ? [...loadedPairs, createEmptyPair()]
+            : [{ id: "1", hint: "", word: "" }]
+        );
+      } catch (err) {
+        alert((err as Error).message || "Failed to load crossword for edit");
+      }
+    };
+
+    loadForEdit();
+  }, [user?.id]);
+
   const createEmptyPair = (): HintWordPair => ({
     id: Date.now().toString(),
     hint: "",
@@ -103,10 +143,18 @@ export default function Home() {
 
   const handleCreate = async () => {
     // build words array from pairs
-    const words = pairs.map((p) => ({
-      answer: p.word.trim().toUpperCase(),
-      clue: p.hint.trim(),
-    }));
+    const words = pairs
+      .map((p) => ({
+        answer: p.word.trim().toUpperCase(),
+        clue: p.hint.trim(),
+      }))
+      .filter((word) => word.answer.length > 0 && word.clue.length > 0)
+      .slice(0, 100);
+
+    if (words.length === 0) {
+      alert("Please add at least one complete hint/word pair");
+      return;
+    }
 
     try {
       const res = await authFetch("/api/generate", {
@@ -250,18 +298,9 @@ export default function Home() {
               )}
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-2">
               {pairs.map((pair) => (
-                <div key={pair.id} className="classic-surface p-6 border">
-                  <div className="grid grid-cols-[2fr_1fr_auto] gap-x-4 gap-y-2 items-start">
-                    <label className="classic-text block text-sm font-medium">
-                      Hint
-                    </label>
-                    <label className="classic-text block text-sm font-medium">
-                      Word
-                    </label>
-                    <div />
-
+                <div key={pair.id} className="grid grid-cols-[2fr_1fr_auto] gap-2 items-center">
                     <textarea
                       value={pair.hint}
                       onChange={(e) =>
@@ -269,6 +308,7 @@ export default function Home() {
                       }
                       className="classic-input w-full h-11 px-4 py-2 border rounded-lg placeholder-zinc-500 focus:outline-none resize-none overflow-hidden"
                       placeholder="Enter a hint..."
+                      aria-label="Hint"
                       rows={1}
                     />
 
@@ -279,6 +319,7 @@ export default function Home() {
                       }
                       className="classic-input w-full h-11 px-4 py-2 border rounded-lg placeholder-zinc-500 focus:outline-none resize-none overflow-hidden"
                       placeholder="Enter a word..."
+                      aria-label="Word"
                       rows={1}
                     />
 
@@ -290,12 +331,11 @@ export default function Home() {
                     >
                       Remove
                     </button>
-                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-8">
+            <div className="mt-8 flex justify-end">
               <button
                 onClick={handleCreate}
                 className="classic-btn-sage px-8 py-3 font-medium rounded transition-colors"

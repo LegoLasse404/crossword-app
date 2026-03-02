@@ -15,20 +15,28 @@ export async function POST(req: Request) {
     const auth = await requireApiUser(req);
     if ("error" in auth) return auth.error;
 
-    const parsed = generateBodySchema.safeParse(await req.json());
+    const rawBody = await req.json();
+    const normalizedWords = Array.isArray(rawBody?.words)
+      ? rawBody.words
+          .map((word: any) => ({
+            answer: String(word?.answer || "").trim().toUpperCase(),
+            clue: String(word?.clue || "").trim(),
+          }))
+          .filter((word: any) => word.answer.length > 0 && word.clue.length > 0)
+          .slice(0, 100)
+      : rawBody?.words;
+
+    const parsed = generateBodySchema.safeParse({
+      title: rawBody?.title,
+      words: normalizedWords,
+    });
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
     }
 
     const { words, title } = parsed.data;
 
-    const sanitizedWords = words
-      .map((word: any) => ({
-        answer: String(word?.answer || "").trim().toUpperCase(),
-        clue: String(word?.clue || "").trim(),
-      }))
-      .filter((word: any) => word.answer.length > 0 && word.clue.length > 0)
-      .slice(0, 100);
+    const sanitizedWords = words;
 
     if (sanitizedWords.length === 0) {
       return NextResponse.json({ error: "No valid words provided" }, { status: 400 });
