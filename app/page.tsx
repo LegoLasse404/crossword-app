@@ -230,33 +230,11 @@ export default function Home() {
       <main className="classic-main flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
         {user ? (
           <>
-            <section className="mb-8">
-              <label className="classic-text block text-base font-medium mb-2">
-                For my love
-              </label>
-              <div className="classic-input w-full min-h-28 px-4 py-3 border rounded-lg">
-                <p className="classic-text whitespace-pre-wrap">
-                  Hello my love, you know how we have some old people hobbys, well I made it even easier for us (hope you like hihi). Funny how you said you wanted me to make a website for u and I was already doing that lol. I really appreciate you and our time together and I think this is a cool and cutesy way to show my appreciation. I hope you have fun making crosswords with it, and maybe even share some with me &lt;3. I love you so much, and I hope this makes you think of me every time you use it. I'll show you how things work n stuff irl. Love you super much &lt;3
-                </p>
-              </div>
-            </section>
-
             <h1 className="classic-title text-3xl font-bold mb-8">
               Create Crossword
             </h1>
 
-            <div className="mb-8">
-              <label className="classic-text block text-sm font-medium mb-2">
-                Crossword Title (optional)
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter a title for your crossword..."
-                className="classic-input w-full px-4 py-2 border rounded-lg placeholder-zinc-500 focus:outline-none"
-              />
-            </div>
+            {/* Title input removed as requested */}
 
             <div className="mb-8">
               {previewLayout && (
